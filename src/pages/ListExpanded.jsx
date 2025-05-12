@@ -129,14 +129,14 @@ const handleGoHome = () => {
 
   return (
     <Flex width="100vw" height="100vh">
-      <Flex width="20%" direction="column" padding="size-500">
+      <Flex width="10%" direction="column" padding="size-500">
         <ActionButton margin="size-100" maxWidth="size-1000"
          onPress={handleGoHome} aria-label="Домой">
           <ArrowLeft />
         </ActionButton>
       </Flex>
 
-      <Flex width="60%" direction="column" alignItems="center" justifyContent="center">
+      <Flex width="80%" direction="column" alignItems="center" justifyContent="center">
         <Card width="100%">
           <CardHeader>
             <Flex direction="row" alignItems="center" justifyContent="space-between">
@@ -190,7 +190,7 @@ const handleGoHome = () => {
         </Card>
       </Flex>
 
-      <Flex width="20%" />
+      <Flex width="10%" />
     </Flex>
 
   );
