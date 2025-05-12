@@ -1,4 +1,4 @@
-export const API_BASE = 'http://localhost:8000/api';
+export const API_BASE = 'shopsmartapi-production.up.railway.app/api';
 
 export const createList = async (name) => {
   const res = await fetch(`${API_BASE}/lists`, {
