@@ -8,12 +8,13 @@ import {
   deleteList,
   generateItems,
 } from "@/api"; // ваш файл с API-функциями
-import { Flex, View, Button, Checkbox, TextField, Text } from "@adobe/react-spectrum";
+import { Flex, View, Button, Checkbox, TextField, Text, ActionButton } from "@adobe/react-spectrum";
 import Add from "@spectrum-icons/workflow/Add";
 import Delete from "@spectrum-icons/workflow/Delete";
 import Share from "@spectrum-icons/workflow/Share";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ArrowLeft from '@spectrum-icons/workflow/ArrowLeft';
 
 export default function ListExpanded() {
   const { listId } = useParams();
@@ -46,21 +47,30 @@ export default function ListExpanded() {
   };
 
   const handleAdd = () => {
-    const title = window.prompt("Название нового элемента:");
-    if (!title) return;
+  const titleInput = window.prompt("Введите название и количество (например, Молоко 2):");
+  if (!titleInput) return;
 
-    // Оптимистичное добавление
-    const tempId = `temp-${Date.now()}`;
-    optimisticUpdate(l =>
-      l.items.push({ id: tempId, title, quantity: 1, price: 0, is_bought: false })
-    );
-    addItem(listId, { title, quantity: 1, price: 0, is_bought: false })
-      .then(() => fetchListById(listId).then(fresh => setList(fresh)))
-      .catch(err => {
-        console.error(err);
-        // на ошибку можно показать уведомление и/или откатить список
-      });
-  };
+  const parts = titleInput.trim().split(" ");
+  const quantity = parseInt(parts.pop(), 10);
+  const title = parts.join(" ");
+
+  if (!title || isNaN(quantity) || quantity < 1) {
+    alert("Пожалуйста, введите название и корректное количество, например: Хлеб 3");
+    return;
+  }
+
+  // Оптимистичное добавление
+  const tempId = `temp-${Date.now()}`;
+  optimisticUpdate(l =>
+    l.items.push({ id: tempId, title: `${title} (${quantity})`, quantity, price: 0, is_bought: false })
+  );
+  addItem(listId, { title: `${title} (${quantity})`, quantity, price: 0, is_bought: false })
+    .then(() => fetchListById(listId).then(fresh => setList(fresh)))
+    .catch(err => {
+      console.error(err);
+      // уведомление/откат
+    });
+};
 
   const handleToggle = (item, isBought) => {
   setList(prev => {
@@ -78,6 +88,9 @@ export default function ListExpanded() {
     });
 };
 
+const handleGoHome = () => {
+  navigate('/');
+};
 
   const handleDeleteItemLocal = (item) => {
     optimisticUpdate(l => {
@@ -115,59 +128,71 @@ export default function ListExpanded() {
   };
 
   return (
-    <Flex width="100vw" height="100vh" justifyContent="center" alignItems="center">
-      <Card width="size-3600">
-        <CardHeader>
-          <Flex direction="row" alignItems="center" justifyContent="space-between">
-            <CardTitle>{list.name}</CardTitle>
-            <Flex direction="row" gap="size-100">
-              <Button onPress={handleAdd} aria-label="Добавить"><Add /></Button>
-              <Button onPress={handleDeleteList} aria-label="Удалить"><Delete /></Button>
-              <Button onPress={handleShare} aria-label="Поделиться"><Share /></Button>
-            </Flex>
-          </Flex>
-        </CardHeader>
+    <Flex width="100vw" height="100vh">
+      <Flex width="20%" direction="column" padding="size-500">
+        <ActionButton margin="size-100" maxWidth="size-1000"
+         onPress={handleGoHome} aria-label="Домой">
+          <ArrowLeft />
+        </ActionButton>
+      </Flex>
 
-        <CardContent>
-          <ScrollArea style={{ maxHeight: 400 }} className="overflow-auto rounded-md">
-            <Flex direction="column" gap="size-100">
-              {list.items.map(item => (
-                <Flex key={item.id} direction="row" alignItems="center" gap="size-200">
-                  <Checkbox
-                    isSelected={item.is_bought}
-                    onChange={(isSelected) => handleToggle(item, isSelected)}
+      <Flex width="60%" direction="column" alignItems="center" justifyContent="center">
+        <Card width="100%">
+          <CardHeader>
+            <Flex direction="row" alignItems="center" justifyContent="space-between">
+              <CardTitle>{list.name}</CardTitle>
+              <Flex direction="row" gap="size-100">
+                <Button onPress={handleAdd} aria-label="Добавить"><Add /></Button>
+                <Button onPress={handleDeleteList} aria-label="Удалить"><Delete /></Button>
+                <Button onPress={handleShare} aria-label="Поделиться"><Share /></Button>
+              </Flex>
+            </Flex>
+          </CardHeader>
+
+          <CardContent>
+            <ScrollArea style={{ maxHeight: 400 }} className="overflow-auto rounded-md">
+              <Flex direction="column" gap="size-100">
+                {list.items.map(item => (
+                  <Flex key={item.id} direction="row" alignItems="center" gap="size-200">
+                    <Checkbox
+                      isSelected={item.is_bought}
+                      onChange={(isSelected) => handleToggle(item, isSelected)}
                     />
-                  <Flex direction="row" alignItems="center" gap="size-100" flex>
-                    <Text>{item.title}</Text>
-                    <Text>{item.quantity}</Text>
+                    <Flex direction="row" alignItems="center" gap="size-100" flex>
+                      <Text>{item.title}</Text>
+                      <Text>{item.quantity}</Text>
+                    </Flex>
+                    <Button onPress={() => handleDeleteItemLocal(item)} aria-label="Удалить">
+                      <Delete />
+                    </Button>
                   </Flex>
-                  <Button onPress={() => handleDeleteItemLocal(item)} aria-label="Удалить">
-                    <Delete />
-                  </Button>
-                </Flex>
-              ))}
-            </Flex>
-          </ScrollArea>
-          <View marginTop="size-200">
-            <Text>Итого: {total.toFixed(2)}</Text>
-          </View>
-        </CardContent>
+                ))}
+              </Flex>
+            </ScrollArea>
+            <View marginTop="size-200">
+              <Text>Итого: {total.toFixed(2)}тг</Text>
+            </View>
+          </CardContent>
 
-        <CardFooter>
-          <Flex direction="row" alignItems="center" gap="size-200">
-            <TextField
-              placeholder="Генерировать элементы…"
-              value={prompt}
-              onChange={setPrompt}
-              flex
-            />
-            <Button variant="cta" onPress={handleGenerate}>
-              Генерировать
-            </Button>
-          </Flex>
-        </CardFooter>
-      </Card>
+          <CardFooter>
+            <Flex direction="row" alignItems="center" gap="size-200">
+              <TextField
+                placeholder="Генерировать элементы…"
+                value={prompt}
+                onChange={setPrompt}
+                flex
+              />
+              <Button variant="cta" onPress={handleGenerate}>
+                Генерировать
+              </Button>
+            </Flex>
+          </CardFooter>
+        </Card>
+      </Flex>
+
+      <Flex width="20%" />
     </Flex>
+
   );
 }
 
