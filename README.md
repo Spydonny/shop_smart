@@ -1,20 +1,48 @@
 # shop_smart
 
-Ссылка на бэкэнд: https://github.com/Spydonny/shop_smart_api 
+A modern smart shopping frontend built with React 19, Tailwind CSS, Adobe Spectrum, and Radix UI.
 
-Запуск:
-    npm install
+🔗 Live: [shop-smart-sand.vercel.app](https://shop-smart-sand.vercel.app)
 
-Данное веб-приложение создано для учета списка покупокс с базовыми функциями. Этот проект написан на React-js (фронт), FastAPI (бэк) а бд это MongoDB.
+## Features
 
-Если останавливаться на этапе проектирования, я планировал реализовать функции которые предлагались в ТЗ кроме этого аунтификацию и постройку маршрута до ближайшего гипермаркета с помощью гугловской апишки. 
+- Clean product catalog with filtering and search
+- Shopping cart with real-time updates
+- Accessible UI components from Adobe Spectrum and Radix UI
+- Responsive layout for mobile and desktop
+- Smooth animations and transitions
 
-Из-за того что я смог приступить к написанию кода только в воскресенье, по причине других дел которые у меня были парралелльно, я решил максимально упростить проект убрав все те функции которые я хотел реализовать отдельно от ТЗ. 
+## Tech Stack
 
-Если детальнее расматривать реализацию, я подключил Gemini API не только для генерации элементов списка, но и для апроксимации цены продуктов. Еще я попробовал лично для себя в первый раз Adode Spectrum. (Его layout показался мне интересным)
+| Layer | Tech |
+|-------|------|
+| Framework | React 19, Vite |
+| Language | JavaScript (JSX) |
+| Styling | Tailwind CSS v4, styled-components |
+| UI Components | Adobe Spectrum, Radix UI |
+| Icons | Lucide React |
+| Routing | React Router v7 |
+| Deploy | Vercel |
 
-Прошу прощения за ui, который никак не адаптирован для мобильных устройств и написан максимально прямолинейно. Кроме этого я почти не хэндлил задержки.
+## Getting Started
 
-Я выбрал FastAPI, потому что на нем у меня больше всего опыта в разработке и мне самому легче на нем писать из-за того что есть встроенный Swagger и удобно дебагать
-React-js, потому что предоставляет самые удобные либы для реализации ui в сжатые сроки
-MongoDB, потому что noSQL бд лучше подходять для таких проектов где сроки сжатые (Думаю не надо объяснять)
+```bash
+npm install
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Project Structure
+
+```
+src/
+├── components/    # Reusable UI components
+├── public/        # Static assets
+└── main.jsx       # Entry point
+```
